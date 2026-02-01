@@ -218,6 +218,19 @@ pub fn parse_command(args: &[String], flags: &Flags) -> Result<Value, ParseError
             })?;
             Ok(json!({ "id": id, "action": "upload", "selector": sel, "files": &rest[1..] }))
         }
+        "upload_click" => {
+            let sel = rest.first().ok_or_else(|| ParseError::MissingArguments {
+                context: "upload_click".to_string(),
+                usage: "upload_click <button-selector> <files...>",
+            })?;
+            if rest.len() < 2 {
+                return Err(ParseError::MissingArguments {
+                    context: "upload_click".to_string(),
+                    usage: "upload_click <button-selector> <files...>",
+                });
+            }
+            Ok(json!({ "id": id, "action": "upload_click", "selector": sel, "files": &rest[1..] }))
+        }
         "download" => {
             let sel = rest.first().ok_or_else(|| ParseError::MissingArguments {
                 context: "download".to_string(),

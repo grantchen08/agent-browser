@@ -97,6 +97,13 @@ const uploadSchema = baseCommandSchema.extend({
   files: z.union([z.string(), z.array(z.string())]),
 });
 
+const uploadClickSchema = baseCommandSchema.extend({
+  action: z.literal('upload_click'),
+  selector: z.string().min(1),
+  files: z.union([z.string(), z.array(z.string())]),
+  timeout: z.number().optional(),
+});
+
 const dblclickSchema = baseCommandSchema.extend({
   action: z.literal('dblclick'),
   selector: z.string().min(1),
@@ -834,6 +841,7 @@ const commandSchema = z.discriminatedUnion('action', [
   checkSchema,
   uncheckSchema,
   uploadSchema,
+  uploadClickSchema,
   dblclickSchema,
   focusSchema,
   dragSchema,

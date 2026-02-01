@@ -749,6 +749,8 @@ agent-browser upload - Upload files
 Usage: agent-browser upload <selector> <files...>
 
 Uploads one or more files to a file input element.
+Note: This only works with <input type="file"> elements.
+For buttons that open file dialogs, use upload_click instead.
 
 Global Options:
   --json               Output as JSON
@@ -781,6 +783,28 @@ Examples:
   agent-browser download "a[href$='.zip']" ./archive.zip
 "##
         }
+
+        "upload_click" => r##"
+agent-browser upload_click - Upload files via button click
+
+Usage: agent-browser upload_click <button-selector> <files...>
+
+Clicks a button that opens a file chooser dialog, then uploads the specified files.
+Use this for upload buttons that are NOT <input type="file"> elements.
+
+This works by:
+1. Setting up a listener for the filechooser event
+2. Clicking the button to trigger the file dialog
+3. Programmatically setting the files in the dialog
+
+Global Options:
+  --json               Output as JSON
+  --session <name>     Use specific session
+
+Examples:
+  agent-browser upload_click @e36 ./image.png
+  agent-browser upload_click "button:has-text('Upload')" ./doc1.pdf ./doc2.pdf
+"##,
 
         // === Keyboard ===
         "press" | "key" => {
@@ -1781,7 +1805,8 @@ Core Commands:
   uncheck <sel>              Uncheck checkbox
   select <sel> <val...>      Select dropdown option
   drag <src> <dst>           Drag and drop
-  upload <sel> <files...>    Upload files
+  upload <sel> <files...>    Upload files (input element)
+  upload_click <sel> <files> Upload via button click (file dialog)
   download <sel> <path>      Download file by clicking element
   scroll <dir> [px]          Scroll (up/down/left/right)
   scrollintoview <sel>       Scroll element into view

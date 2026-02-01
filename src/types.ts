@@ -81,6 +81,13 @@ export interface UploadCommand extends BaseCommand {
   files: string | string[];
 }
 
+export interface UploadClickCommand extends BaseCommand {
+  action: 'upload_click';
+  selector: string; // Button that triggers file chooser
+  files: string | string[];
+  timeout?: number;
+}
+
 export interface DoubleClickCommand extends BaseCommand {
   action: 'dblclick';
   selector: string;
@@ -863,6 +870,7 @@ export type Command =
   | CheckCommand
   | UncheckCommand
   | UploadCommand
+  | UploadClickCommand
   | DoubleClickCommand
   | FocusCommand
   | DragCommand

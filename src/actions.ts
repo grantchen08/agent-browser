@@ -22,6 +22,7 @@ import type {
   CheckCommand,
   UncheckCommand,
   UploadCommand,
+  UploadClickCommand,
   DoubleClickCommand,
   FocusCommand,
   DragCommand,
@@ -239,6 +240,8 @@ export async function executeCommand(command: Command, browser: BrowserManager):
         return await handleUncheck(command, browser);
       case 'upload':
         return await handleUpload(command, browser);
+      case 'upload_click':
+        return await handleUploadClick(command, browser);
       case 'dblclick':
         return await handleDoubleClick(command, browser);
       case 'focus':
@@ -883,6 +886,31 @@ async function handleUpload(command: UploadCommand, browser: BrowserManager): Pr
   } catch (error) {
     throw toAIFriendlyError(error, command.selector);
   }
+  return successResponse(command.id, { uploaded: files });
+}
+
+async function handleUploadClick(
+  command: UploadClickCommand,
+  browser: BrowserManager
+): Promise<Response> {
+  const page = browser.getPage();
+  const locator = browser.getLocator(command.selector);
+  const files = Array.isArray(command.files) ? command.files : [command.files];
+  const timeout = command.timeout ?? 30000;
+
+  try {
+    // Set up file chooser listener before clicking the button
+    const [fileChooser] = await Promise.all([
+      page.waitForEvent('filechooser', { timeout }),
+      locator.click(),
+    ]);
+
+    // Set the files via the file chooser
+    await fileChooser.setFiles(files);
+  } catch (error) {
+    throw toAIFriendlyError(error, command.selector);
+  }
+
   return successResponse(command.id, { uploaded: files });
 }
 
